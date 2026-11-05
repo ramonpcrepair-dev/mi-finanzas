@@ -6,8 +6,8 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
-  "orientation": "portrait"
-,"icons": [
+  "orientation": "portrait",
+"icons": [
   {
     "src": "Mis_finanzas_icon_192.png",
     "sizes": "192x192",
