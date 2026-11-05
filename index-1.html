@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#126b50">
+<title>Mi Dinero</title>
+<style>
+:root{--green:#126b50;--green2:#e8f5ee;--bg:#f3f7f5;--ink:#17231e;--muted:#68766f;--red:#b33b3b;--line:#dce7e1;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:linear-gradient(145deg,#0d503d,#16845f);color:white;padding:24px 18px 34px;border-radius:0 0 28px 28px}
+.top{display:flex;justify-content:space-between;align-items:center}.brand{font-weight:800;font-size:20px;letter-spacing:-.4px}.tag{font-size:11px;background:#ffffff22;padding:6px 9px;border-radius:30px}
+.balance-label{margin-top:25px;font-size:13px;color:#d8eee4}.balance{font-size:36px;font-weight:800;margin-top:3px;letter-spacing:-1px}
+main{max-width:780px;margin:auto;padding:15px}.summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:-13px}
+.card{background:var(--white);border:1px solid var(--line);border-radius:17px;padding:15px;box-shadow:0 5px 18px #173d2b0a}
+.small{font-size:12px;color:var(--muted)}.amount{font-size:18px;font-weight:800;margin-top:5px}.income{color:#14764d}.expense{color:var(--red)}
+nav{display:flex;gap:7px;overflow-x:auto;padding:17px 0 12px;scrollbar-width:none}nav button{white-space:nowrap;border:1px solid var(--line);background:white;color:var(--ink);border-radius:30px;padding:10px 13px;font-weight:700}nav button.active{background:var(--green);color:white;border-color:var(--green)}
+h2{font-size:17px;margin:3px 0 13px}h3{font-size:14px;margin:0 0 9px}.panel{display:none}.panel.active{display:block}
+label{display:block;font-size:12px;font-weight:700;margin:12px 0 6px}input,select{width:100%;padding:12px;border:1px solid #cbd8d1;border-radius:11px;background:white;font:inherit;color:var(--ink)}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button.primary{width:100%;margin-top:14px;background:var(--green);color:white;border:0;border-radius:11px;padding:13px;font:inherit;font-weight:750}
+.list{display:flex;flex-direction:column;gap:8px;margin-top:10px}.item{display:flex;align-items:center;justify-content:space-between;gap:10px;background:white;border:1px solid var(--line);padding:12px;border-radius:12px}.item-title{font-weight:700}.item-meta{font-size:11px;color:var(--muted);margin-top:3px}.delete{border:0;background:#fff0f0;color:var(--red);border-radius:8px;padding:7px 9px}
+.notice{background:#fff8e5;border:1px solid #f0dfad;border-radius:12px;padding:12px;font-size:12px;color:#624c12;margin:13px 0}
+.empty{color:var(--muted);font-size:13px;padding:15px;text-align:center}.footer{color:var(--muted);font-size:11px;text-align:center;padding:22px 6px}
+.chart-wrap{height:210px;position:relative}.chart-wrap canvas{width:100%;height:100%;display:block}.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:8px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.progress{height:10px;background:#e8eeeb;border-radius:20px;overflow:hidden;margin:10px 0}.progress span{height:100%;display:block;background:#16845f;width:0%;transition:width .2s}.budgetline{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted)}
+@media(min-width:600px){.summary{grid-template-columns:repeat(4,minmax(0,1fr))}.balance{font-size:42px}}
+</style>
+</head>
+<body>
+<header><div class="top"><div class="brand">💚 Mi Dinero</div><div class="tag">FINANZAS PERSONALES</div></div>
+<div class="balance-label">Balance disponible estimado</div><div class="balance" id="balance">RD$ 0.00</div>
+<div class="small" style="color:#d8eee4;margin-top:5px">Tus finanzas, claras y bajo control.</div></header>
+<main>
+<section class="summary">
+<div class="card"><div class="small">Ingresos</div><div class="amount income" id="totalIncome">RD$ 0.00</div></div>
+<div class="card"><div class="small">Gastos</div><div class="amount expense" id="totalExpense">RD$ 0.00</div></div>
+<div class="card"><div class="small">Ahorros registrados</div><div class="amount" id="totalSavings">RD$ 0.00</div></div>
+<div class="card"><div class="small">Deudas pendientes</div><div class="amount" id="totalDebt">RD$ 0.00</div></div>
+</section>
+<nav aria-label="Secciones">
+<button class="active" data-tab="inicio">Resumen</button><button data-tab="ingreso">+ Ingreso</button><button data-tab="gasto">− Gasto</button><button data-tab="ahorro">Ahorro</button><button data-tab="deuda">Deudas</button><button data-tab="compra">Compras</button>
+</nav>
+<section id="panel-inicio" class="panel active">
+<div class="card">
+<h2>Presupuesto mensual</h2>
+<label for="budget">Límite de gastos del mes (RD$)</label><input id="budget" type="number" min="0" step="0.01" placeholder="Ej. 25000">
+<div class="progress"><span id="budgetBar"></span></div><div class="budgetline"><span id="budgetSpent">Gastado: RD$ 0.00</span><strong id="budgetStatus">Define tu límite</strong></div>
+</div>
+<div class="card" style="margin-top:11px"><h2>Ingresos vs. gastos</h2><div class="chart-wrap"><canvas id="compareChart" aria-label="Gráfico de ingresos y gastos"></canvas></div><div class="legend"><span><i class="dot" style="background:#16845f"></i>Ingresos</span><span><i class="dot" style="background:#c44b4b"></i>Gastos</span></div></div>
+<div class="card" style="margin-top:11px"><h2>¿En qué gastas?</h2><div class="chart-wrap" style="height:190px"><canvas id="categoryChart" aria-label="Gráfico de gastos por categoría"></canvas></div><div id="categoryLegend" class="legend"></div></div>
+<h2 style="margin-top:18px">Movimientos recientes</h2><div id="recent" class="list"><div class="empty">Todavía no hay movimientos.</div></div>
+<div class="notice">Tus datos se guardan en el almacenamiento de este navegador y dispositivo. Exporta una copia de seguridad con frecuencia.</div>
+</section>
+<section id="panel-ingreso" class="panel"><div class="card"><h2>Registrar ingreso</h2><form data-kind="ingreso">
+<label>Descripción</label><input name="desc" placeholder="Ej. pago de trabajo" required>
+<div class="formgrid"><div><label>Monto (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" required></div><div><label>Fecha</label><input name="date" type="date" required></div></div>
+<label>Tipo de ingreso</label><select name="category"><option>Trabajo</option><option>Negocio</option><option>Venta</option><option>Ayuda familiar</option><option>Otro</option></select><button class="primary">Guardar ingreso</button></form></div></section>
+<section id="panel-gasto" class="panel"><div class="card"><h2>Registrar gasto</h2><form data-kind="gasto">
+<label>Descripción</label><input name="desc" placeholder="Ej. compra del supermercado" required>
+<div class="formgrid"><div><label>Monto (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" required></div><div><label>Fecha</label><input name="date" type="date" required></div></div>
+<label>Categoría</label><select name="category"><option>Comida</option><option>Transporte</option><option>Vivienda</option><option>Servicios</option><option>Salud</option><option>Educación</option><option>Familia</option><option>Entretenimiento</option><option>Compras personales</option><option>Otro</option></select><button class="primary">Guardar gasto</button></form></div></section>
+<section id="panel-ahorro" class="panel"><div class="card"><h2>Registrar ahorro</h2><form data-kind="ahorro"><label>Meta de ahorro</label><input name="desc" placeholder="Ej. fondo de emergencia" required><div class="formgrid"><div><label>Monto (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" required></div><div><label>Fecha</label><input name="date" type="date" required></div></div><button class="primary">Guardar ahorro</button></form></div></section>
+<section id="panel-deuda" class="panel"><div class="card"><h2>Registrar deuda pendiente</h2><form data-kind="deuda"><label>¿A quién o qué debes?</label><input name="desc" placeholder="Ej. préstamo personal" required><div class="formgrid"><div><label>Monto pendiente (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" required></div><div><label>Fecha</label><input name="date" type="date" required></div></div><button class="primary">Guardar deuda</button></form></div></section>
+<section id="panel-compra" class="panel"><div class="card"><h2>Planificar una compra</h2><form data-kind="compra"><label>¿Qué quieres comprar?</label><input name="desc" placeholder="Ej. nevera" required><div class="formgrid"><div><label>Precio estimado (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" required></div><div><label>Fecha deseada</label><input name="date" type="date" required></div></div><button class="primary">Guardar plan</button></form></div></section>
+<section class="card" style="margin-top:16px"><h2>Tus datos</h2><p class="small">La aplicación no está conectada a bancos. Tus registros permanecen en este navegador; si borras sus datos o cambias de dispositivo podrías perderlos.</p>
+<button class="primary" id="export" type="button">Exportar copia de seguridad</button><button class="primary" id="clear" type="button" style="background:#8b2929">Borrar todos los registros</button></section>
+<div class="footer">Mi Dinero · Finanzas personales en RD$ · No conectada a bancos</div>
+</main>
+<script>
+const KEY='miDineroRegistrosV1', BUDGET_KEY='miDineroPresupuestoV1';
+let records=[];try{records=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(records))records=[]}catch(e){records=[]}
+const today=new Date(),localDate=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+document.querySelectorAll('input[type=date]').forEach(x=>x.value=localDate);
+const money=n=>new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',minimumFractionDigits:2}).format(n);
+const monthKey=d=>String(d||'').slice(0,7), currentMonth=localDate.slice(0,7);
+let budget=Number(localStorage.getItem(BUDGET_KEY)||0);document.getElementById('budget').value=budget||'';
+function save(){localStorage.setItem(KEY,JSON.stringify(records));render()}
+function total(kind,items=records){return items.filter(r=>r.kind===kind).reduce((a,r)=>a+Number(r.amount||0),0)}
+function monthRecords(){return records.filter(r=>monthKey(r.date)===currentMonth)}
+function drawCompare(items){
+ const c=document.getElementById('compareChart'),ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,dpr=window.devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
+ const vals=[total('ingreso',items),total('gasto',items)],max=Math.max(...vals,1),base=h-28,top=15,barW=Math.min(65,w/4),gap=35,start=w/2-(barW*2+gap)/2;
+ vals.forEach((v,i)=>{const bh=(base-top)*v/max,x=start+i*(barW+gap);ctx.fillStyle=i===0?'#16845f':'#c44b4b';ctx.beginPath();ctx.roundRect(x,base-bh,barW,bh,7);ctx.fill();ctx.fillStyle='#52635a';ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillText(i===0?'Ingresos':'Gastos',x+barW/2,h-8);ctx.fillStyle='#17231e';ctx.font='bold 11px system-ui';ctx.fillText(money(v),x+barW/2,Math.max(11,base-bh-7));});
+}
+function drawCategories(items){
+ const c=document.getElementById('categoryChart'),ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,dpr=window.devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
+ const sums={};items.filter(r=>r.kind==='gasto').forEach(r=>{const k=r.category||'Otro';sums[k]=(sums[k]||0)+Number(r.amount||0)});
+ const entries=Object.entries(sums).sort((a,b)=>b[1]-a[1]),sum=entries.reduce((a,x)=>a+x[1],0),legend=document.getElementById('categoryLegend');legend.innerHTML='';
+ if(!sum){ctx.fillStyle='#68766f';ctx.font='13px system-ui';ctx.textAlign='center';ctx.fillText('Registra gastos para ver el gráfico',w/2,h/2);return}
+ const colors=['#16845f','#e0a33a','#5486c7','#c44b4b','#8c69b3','#42a6a0','#d17a45','#718078','#b27b9d'];let angle=-Math.PI/2;const cx=w/2,cy=h/2,r=Math.min(73,h/2-5);
+ entries.forEach(([name,val],i)=>{const next=angle+val/sum*Math.PI*2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,angle,next);ctx.closePath();ctx.fillStyle=colors[i%colors.length];ctx.fill();angle=next;
+ const span=document.createElement('span');span.innerHTML='<i class="dot" style="background:'+colors[i%colors.length]+'"></i>';span.append(document.createTextNode(name+' '+Math.round(val/sum*100)+'%'));legend.append(span);
+ });
+ ctx.fillStyle='#17231e';ctx.textAlign='center';ctx.font='bold 13px system-ui';ctx.fillText(money(sum),cx,cy+4);ctx.fillStyle='#68766f';ctx.font='10px system-ui';ctx.fillText('Total gastado',cx,cy+19);
+}
+function render(){
+ const inc=total('ingreso'),exp=total('gasto'),sav=total('ahorro'),debt=total('deuda');
+ document.getElementById('totalIncome').textContent=money(inc);document.getElementById('totalExpense').textContent=money(exp);document.getElementById('totalSavings').textContent=money(sav);document.getElementById('totalDebt').textContent=money(debt);document.getElementById('balance').textContent=money(inc-exp-sav);
+ const thisMonth=monthRecords(),spent=total('gasto',thisMonth),bar=document.getElementById('budgetBar'),status=document.getElementById('budgetStatus');
+ document.getElementById('budgetSpent').textContent='Gastado este mes: '+money(spent);
+ const pct=budget>0?Math.min(100,spent/budget*100):0;bar.style.width=pct+'%';bar.style.background=budget>0&&spent>budget?'#c44b4b':'#16845f';
+ status.textContent=budget>0?(spent>budget?'Superaste el límite':Math.round(pct)+'% utilizado'):'Define tu límite';
+ drawCompare(thisMonth);drawCategories(thisMonth);
+ const box=document.getElementById('recent');box.innerHTML='';
+ if(!records.length){box.innerHTML='<div class="empty">Todavía no hay movimientos. Registra tu primer ingreso o gasto.</div>';return}
+ [...records].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,30).forEach(r=>{
+  const el=document.createElement('div');el.className='item';const left=document.createElement('div');left.style.minWidth='0';
+  const title=document.createElement('div');title.className='item-title';title.textContent=r.desc;
+  const meta=document.createElement('div');meta.className='item-meta';meta.textContent=(r.category||'General')+' · '+(r.date||'')+' · '+({ingreso:'Ingreso',gasto:'Gasto',ahorro:'Ahorro',deuda:'Deuda',compra:'Compra planeada'}[r.kind]||r.kind);
+  const amount=document.createElement('div');amount.style.fontWeight='800';amount.style.textAlign='right';amount.textContent=money(r.amount);if(r.kind==='gasto')amount.style.color='var(--red)';if(r.kind==='ingreso')amount.style.color='var(--green)';
+  const del=document.createElement('button');del.className='delete';del.textContent='Eliminar';del.type='button';del.addEventListener('click',()=>{if(confirm('¿Eliminar este registro?')){records=records.filter(x=>x.id!==r.id);save()}});
+  const right=document.createElement('div');right.style.display='flex';right.style.flexDirection='column';right.style.alignItems='flex-end';right.style.gap='6px';right.append(amount,del);left.append(title,meta);el.append(left,right);box.append(el);
+ });
+}
+document.querySelectorAll('nav button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+btn.dataset.tab));if(btn.dataset.tab==='inicio')render()}));
+document.querySelectorAll('form[data-kind]').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(form),amount=Number(fd.get('amount'));if(!Number.isFinite(amount)||amount<=0){alert('Escribe un monto válido.');return}records.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),kind:form.dataset.kind,desc:String(fd.get('desc')).trim(),amount,date:fd.get('date')||localDate,category:fd.get('category')||({ahorro:'Meta de ahorro',deuda:'Deuda',compra:'Compra planeada'}[form.dataset.kind])});save();form.reset();form.querySelector('input[type=date]').value=localDate;document.querySelector('[data-tab="inicio"]').click();alert('¡Registro guardado!')}));
+document.getElementById('budget').addEventListener('change',e=>{budget=Math.max(0,Number(e.target.value)||0);localStorage.setItem(BUDGET_KEY,String(budget));render()});
+document.getElementById('export').addEventListener('click',()=>{const backup={records,budget,exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mi-dinero-copia.json';a.click();URL.revokeObjectURL(url)});
+document.getElementById('clear').addEventListener('click',()=>{if(confirm('¿Seguro que deseas borrar TODOS los registros? Esta acción no se puede deshacer.')){records=[];save()}});
+window.addEventListener('resize',()=>{clearTimeout(window._chartTimer);window._chartTimer=setTimeout(render,120)});
+render();
+</script>
+</body></html>
