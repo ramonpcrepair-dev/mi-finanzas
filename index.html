@@ -147,4 +147,12 @@ document.getElementById('clear').addEventListener('click',()=>{if(confirm('¿Seg
 window.addEventListener('resize',()=>{clearTimeout(window._chartTimer);window._chartTimer=setTimeout(render,120)});
 render();
 </script>
-</body></html>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(() => console.log("Mi Dinero está lista"))
+      .catch(error => console.log(error));
+  });
+}
+</script></body></html>
