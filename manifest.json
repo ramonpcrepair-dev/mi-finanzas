@@ -1,26 +1,26 @@
-
 {
-  "id": "./",
-  "name": "Mi Dinero",
-  "short_name": "Mi Dinero",
-  "description": "Aplicación personal para controlar ingresos, gastos y administrar mis finanzas.",
-  "start_url": "./index.html",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
-  "orientation": "portrait",
-  "icons": [
-  {
-    "src": "Mis_finanzas_icon_192.png",
-    "sizes": "192x192",
-    "type": "image/png",
-    "purpose": "any"
-  },
-  {
-    "src": "Mis_finanzas_icon_512.png",
-    "sizes": "512x512",
-    "type": "image/png",
-    "purpose": "any"
-  }
-  ]
+"id": "./",
+"name": "Mi Dinero",
+"short_name": "Mi Dinero",
+"description": "Aplicación personal para controlar ingresos, gastos y administrar mis finanzas.",
+"start_url": "./index.html",
+"scope": "./",
+"display": "standalone",
+"background_color": "#ffffff",
+"theme_color": "#2563eb",
+"orientation": "portrait",
+"icons": [
+{
+"src": "Mis_finanzas_icon_192.png",
+"sizes": "192x192",
+"type": "image/png",
+"purpose": "any"
+},
+{
+"src": "Mis_finanzas_icon_512.png",
+"sizes": "512x512",
+"type": "image/png",
+"purpose": "any"
+}
+]
+}
