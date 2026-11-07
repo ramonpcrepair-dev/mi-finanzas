@@ -363,19 +363,25 @@ document.getElementById('printReport').addEventListener('click',()=>{
 
  const win=window.open('','_blank');
 
- if(!win){
-  alert('Permite las ventanas emergentes para imprimir.');
-  return;
- }
+if(!win){
+ alert('Permite las ventanas emergentes para imprimir.');
+ return;
+}
 
- win.document.open();
- win.document.write(reportHTML(report));
- win.document.close();
+win.document.open();
+win.document.write(reportHTML(report));
+win.document.close();
 
- win.onload=()=>{
-  win.focus();
+win.onload=()=>{
+ win.focus();
+ setTimeout(()=>{
   win.print();
- };
+ },500);
+};
+
+win.onafterprint=()=>{
+ win.close();
+};
 });
 
 document.getElementById('shareReport').addEventListener('click',async()=>{
