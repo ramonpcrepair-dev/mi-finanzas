@@ -145,7 +145,12 @@ function render(){
 document.querySelectorAll('nav button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+btn.dataset.tab));if(btn.dataset.tab==='inicio')render()}));
 document.querySelectorAll('form[data-kind]').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(form),amount=Number(fd.get('amount'));if(!Number.isFinite(amount)||amount<=0){alert('Escribe un monto válido.');return}records.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),kind:form.dataset.kind,desc:String(fd.get('desc')).trim(),amount,date:fd.get('date')||localDate,category:fd.get('category')||({ahorro:'Meta de ahorro',deuda:'Deuda',compra:'Compra planeada'}[form.dataset.kind])});save();form.reset();form.querySelector('input[type=date]').value=localDate;document.querySelector('[data-tab="inicio"]').click();alert('¡Registro guardado!')}));
 document.getElementById('budget').addEventListener('change',e=>{budget=Math.max(0,Number(e.target.value)||0);localStorage.setItem(BUDGET_KEY,String(budget));render()});
+
 document.getElementById('export').addEventListener('click',async()=>{
+ if(!confirm('¿Deseas exportar una copia de seguridad?')){
+  return;
+ }
+
  const backup={records,budget,exportedAt:new Date().toISOString()};
  const contenido=JSON.stringify(backup,null,2);
  const blob=new Blob([contenido],{type:'application/json'});
@@ -173,6 +178,7 @@ document.getElementById('export').addEventListener('click',async()=>{
   }
  }
 });
+
 document.getElementById('import').addEventListener('click',()=>{
   if(confirm('¿Deseas seleccionar una copia de seguridad para importar?')){
     document.getElementById('backupFile').click();
