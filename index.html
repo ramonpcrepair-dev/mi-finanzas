@@ -348,16 +348,27 @@ function reportHTML(report){
 
 document.getElementById('printReport').addEventListener('click',()=>{
  const report=createFinancialReport();
+
+ if(!records.length){
+  alert('Todavía no hay movimientos para imprimir.');
+  return;
+ }
+
  const win=window.open('','_blank');
 
  if(!win){
-  alert('Permite las ventanas emergentes para imprimir el informe.');
+  alert('Permite las ventanas emergentes para imprimir.');
   return;
  }
 
  win.document.open();
  win.document.write(reportHTML(report));
  win.document.close();
+
+ win.onload=()=>{
+  win.focus();
+  win.print();
+ };
 });
 
 document.getElementById('shareReport').addEventListener('click',async()=>{
