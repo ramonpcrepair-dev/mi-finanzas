@@ -173,7 +173,11 @@ document.getElementById('export').addEventListener('click',async()=>{
   }
  }
 });
-document.getElementById('import').addEventListener('click',()=>document.getElementById('backupFile').click());
+document.getElementById('import').addEventListener('click',()=>{
+  if(confirm('¿Deseas seleccionar una copia de seguridad para importar?')){
+    document.getElementById('backupFile').click();
+  }
+});
 document.getElementById('backupFile').addEventListener('change',async e=>{
  const file=e.target.files&&e.target.files[0];if(!file)return;
  try{
