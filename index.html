@@ -145,7 +145,34 @@ function render(){
 document.querySelectorAll('nav button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+btn.dataset.tab));if(btn.dataset.tab==='inicio')render()}));
 document.querySelectorAll('form[data-kind]').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(form),amount=Number(fd.get('amount'));if(!Number.isFinite(amount)||amount<=0){alert('Escribe un monto válido.');return}records.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),kind:form.dataset.kind,desc:String(fd.get('desc')).trim(),amount,date:fd.get('date')||localDate,category:fd.get('category')||({ahorro:'Meta de ahorro',deuda:'Deuda',compra:'Compra planeada'}[form.dataset.kind])});save();form.reset();form.querySelector('input[type=date]').value=localDate;document.querySelector('[data-tab="inicio"]').click();alert('¡Registro guardado!')}));
 document.getElementById('budget').addEventListener('change',e=>{budget=Math.max(0,Number(e.target.value)||0);localStorage.setItem(BUDGET_KEY,String(budget));render()});
-document.getElementById('export').addEventListener('click',()=>{const backup={records,budget,exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='mi-dinero-copia.json';a.click();URL.revokeObjectURL(url)});
+document.getElementById('export').addEventListener('click',async()=>{
+ const backup={records,budget,exportedAt:new Date().toISOString()};
+ const contenido=JSON.stringify(backup,null,2);
+ const blob=new Blob([contenido],{type:'application/json'});
+
+ try{
+  if(window.showSaveFilePicker){
+   const handle=await window.showSaveFilePicker({
+    suggestedName:'mi-dinero-copia.json',
+    types:[{description:'Copia de seguridad',accept:{'application/json':['.json']}}]
+   });
+   const writable=await handle.createWritable();
+   await writable.write(blob);
+   await writable.close();
+  }else{
+   const url=URL.createObjectURL(blob);
+   const a=document.createElement('a');
+   a.href=url;
+   a.download='mi-dinero-copia.json';
+   a.click();
+   setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+ }catch(err){
+  if(err.name!=='AbortError'){
+   alert('No se pudo guardar la copia: '+err.message);
+  }
+ }
+});
 document.getElementById('import').addEventListener('click',()=>document.getElementById('backupFile').click());
 document.getElementById('backupFile').addEventListener('change',async e=>{
  const file=e.target.files&&e.target.files[0];if(!file)return;
