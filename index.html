@@ -213,6 +213,175 @@ document.getElementById('backupFile').addEventListener('change',async e=>{
 });
 document.getElementById('clear').addEventListener('click',()=>{if(confirm('¿Seguro que deseas borrar TODOS los registros? Esta acción no se puede deshacer.')){records=[];save()}});
 window.addEventListener('resize',()=>{clearTimeout(window._chartTimer);window._chartTimer=setTimeout(render,120)});
-render();
+
+// ===== INFORMES: IMPRIMIR Y COMPARTIR =====
+
+const reportTools = document.createElement('section');
+reportTools.className = 'card';
+reportTools.style.margin = '15px 0';
+reportTools.innerHTML = `
+ <h2>Informes financieros</h2>
+ <p>Todos tus movimientos registrados</p>
+ <div style="display:flex;gap:10px;flex-wrap:wrap">
+  <button type="button" id="printReport" class="primary">
+   🖨️ Imprimir / PDF
+  </button>
+  <button type="button" id="shareReport" class="primary">
+   📤 Compartir informe
+  </button>
+ </div>
+`;
+
+document.querySelector('main')?.prepend(reportTools);
+
+function createFinancialReport(){
+ const kinds = {
+  ingreso:'Ingresos',
+  gasto:'Gastos',
+  ahorro:'Ahorros',
+  deuda:'Deudas',
+  compra:'Compras planeadas'
+ };
+
+ const sums = {
+  ingreso:total('ingreso'),
+  gasto:total('gasto'),
+  ahorro:total('ahorro'),
+  deuda:total('deuda'),
+  compra:total('compra')
+ };
+
+ const balance = sums.ingreso - sums.gasto - sums.ahorro;
+
+ const lines = [...records].sort((a,b)=>
+  (a.date||'').localeCompare(b.date||'')
+ );
+
+ const rows = lines.map(r => `
+  <tr>
+   <td>${escapeHTML(r.date||'')}</td>
+   <td>${escapeHTML(kinds[r.kind]||r.kind)}</td>
+   <td>${escapeHTML(r.desc||'')}</td>
+   <td>${escapeHTML(r.category||'General')}</td>
+   <td style="text-align:right">${money(r.amount)}</td>
+  </tr>
+ `).join('');
+
+ return {
+  sums,
+  balance,
+  rows,
+  lines,
+  text: [
+   'MI DINERO - INFORME FINANCIERO',
+   'Fecha: '+new Date().toLocaleDateString('es-DO'),
+   '',
+   ...Object.keys(kinds).map(k=>kinds[k]+': '+money(sums[k])),
+   'Balance: '+money(balance),
+   '',
+   'HISTORIAL COMPLETO',
+   ...lines.map(r=>
+    `${r.date||''} | ${kinds[r.kind]||r.kind} | ${r.desc||''} | ${money(r.amount)}`
+   )
+  ].join('\n')
+ };
+}
+
+function escapeHTML(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;',
+  '"':'&quot;',"'":'&#39;'
+ }[c]));
+}
+
+function reportHTML(report){
+ return `
+ <!DOCTYPE html>
+ <html lang="es">
+ <head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1">
+ <title>Informe Mi Dinero</title>
+ <style>
+ body{font-family:Arial,sans-serif;padding:20px;color:#222}
+ h1,h2{text-align:center}
+ .summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+ .box{border:1px solid #ccc;padding:12px;border-radius:8px}
+ table{width:100%;border-collapse:collapse;margin-top:20px}
+ th,td{border:1px solid #ddd;padding:8px;text-align:left}
+ th{background:#eee}
+ @media print{button{display:none}body{padding:0}}
+ </style>
+ </head>
+ <body>
+ <h1>Mi Dinero</h1>
+ <h2>Informe financiero completo</h2>
+ <p>Fecha del informe: ${new Date().toLocaleDateString('es-DO')}</p>
+ <div class="summary">
+ ${Object.entries(report.sums).map(([k,v])=>`
+  <div class="box">
+   <strong>${escapeHTML(k==='ingreso'?'Ingresos':k==='gasto'?'Gastos':k==='ahorro'?'Ahorros':k==='deuda'?'Deudas':'Compras planeadas')}</strong>
+   <p>${money(v)}</p>
+  </div>
+ `).join('')}
+ <div class="box">
+  <strong>Balance</strong>
+  <p>${money(report.balance)}</p>
+ </div>
+ </div>
+ <h2>Todos los movimientos</h2>
+ <table>
+ <thead><tr>
+ <th>Fecha</th><th>Tipo</th><th>Descripción</th>
+ <th>Categoría</th><th>Monto</th>
+ </tr></thead>
+ <tbody>${report.rows||'<tr><td colspan="5">Sin movimientos</td></tr>'}</tbody>
+ </table>
+ <button onclick="window.print()">Imprimir / Guardar PDF</button>
+ </body></html>
+ `;
+}
+
+document.getElementById('printReport').addEventListener('click',()=>{
+ const report=createFinancialReport();
+ const win=window.open('','_blank');
+
+ if(!win){
+  alert('Permite las ventanas emergentes para imprimir el informe.');
+  return;
+ }
+
+ win.document.open();
+ win.document.write(reportHTML(report));
+ win.document.close();
+});
+
+document.getElementById('shareReport').addEventListener('click',async()=>{
+ const report=createFinancialReport();
+
+ if(!records.length){
+  alert('Todavía no hay movimientos para compartir.');
+  return;
+ }
+
+ try{
+  await navigator.share({
+   title:'Informe de Mi Dinero',
+   text:report.text
+  });
+ }catch(e){
+  if(e.name!=='AbortError'){
+   try{
+    await navigator.clipboard.writeText(report.text);
+    alert('Informe copiado. Ya puedes compartirlo.');
+   }catch(err){
+    alert('No se pudo compartir. Intenta nuevamente.');
+   }
+  }
+ }
+});
+
+// ===== FIN DE INFORMES =====
+   render();
 </script>
 </body></html>
