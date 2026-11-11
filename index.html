@@ -410,6 +410,143 @@ document.getElementById('shareReport').addEventListener('click',async()=>{
 });
 
 // ===== FIN DE INFORMES =====
+ 
+const SAVED_REPORTS_KEY = 'miDineroInformesGuardadosV1';
+
+let savedReports = [];
+
+try {
+ savedReports = JSON.parse(
+  localStorage.getItem(SAVED_REPORTS_KEY) || '[]'
+ );
+ if(!Array.isArray(savedReports)) savedReports = [];
+} catch(e) {
+ savedReports = [];
+}
+
+function saveReportsStorage(){
+ localStorage.setItem(
+  SAVED_REPORTS_KEY,
+  JSON.stringify(savedReports)
+ );
+}
+
+const savedReportsSection = document.createElement('section');
+savedReportsSection.className = 'card';
+savedReportsSection.style.margin = '15px 0';
+savedReportsSection.style.padding = '15px';
+
+savedReportsSection.innerHTML = `
+ <h2>Informes guardados</h2>
+ <p>Guarda y consulta tus informes financieros.</p>
+ <button type="button" id="saveFinancialReport">
+  💾 Guardar informe actual
+ </button>
+ <div id="savedReportsList" style="margin-top:15px">
+ </div>
+`;
+
+document.body.appendChild(savedReportsSection);
+
+function renderSavedReports(){
+ const list = document.getElementById('savedReportsList');
+
+ if(!savedReports.length){
+  list.innerHTML = '<p>No tienes informes guardados.</p>';
+  return;
+ }
+
+ list.innerHTML = '';
+
+ savedReports.forEach(item=>{
+  const div = document.createElement('div');
+  div.style.padding = '12px';
+  div.style.border = '1px solid #ccc';
+  div.style.borderRadius = '8px';
+  div.style.marginBottom = '10px';
+
+  const name = document.createElement('strong');
+  name.textContent = item.name;
+
+  const date = document.createElement('p');
+  date.textContent = item.date;
+
+  div.append(name,date);
+
+  ['Abrir','Renombrar','Eliminar'].forEach(action=>{
+   const btn = document.createElement('button');
+   btn.type = 'button';
+   btn.textContent = action;
+   btn.style.margin = '4px';
+
+   btn.addEventListener('click',()=>{
+    if(action==='Abrir'){
+     const win = window.open('','_blank');
+     if(!win){
+      alert('Permite las ventanas emergentes.');
+      return;
+     }
+     win.document.open();
+     win.document.write(reportHTML(item.report));
+     win.document.close();
+    }
+
+    if(action==='Renombrar'){
+     const newName = prompt('Nuevo nombre:',item.name);
+     if(newName && newName.trim()){
+      item.name = newName.trim();
+      saveReportsStorage();
+      renderSavedReports();
+     }
+    }
+
+    if(action==='Eliminar'){
+     if(confirm('¿Eliminar este informe guardado?')){
+      savedReports = savedReports.filter(r=>r.id!==item.id);
+      saveReportsStorage();
+      renderSavedReports();
+     }
+    }
+   });
+
+   div.appendChild(btn);
+  });
+
+  list.appendChild(div);
+ });
+}
+
+document.getElementById('saveFinancialReport')
+.addEventListener('click',()=>{
+ if(!records.length){
+  alert('Todavía no hay movimientos para guardar.');
+  return;
+ }
+
+ const name = prompt('Nombre para este informe:');
+
+ if(!name || !name.trim()) return;
+
+ const report = createFinancialReport();
+
+ savedReports.push({
+  id: String(Date.now()),
+  name: name.trim(),
+  date: new Date().toLocaleDateString('es-DO'),
+  report: report
+ });
+
+ try{
+  saveReportsStorage();
+  renderSavedReports();
+  alert('¡Informe guardado correctamente!');
+ }catch(e){
+  alert('No se pudo guardar. Puede faltar espacio.');
+ }
+});
+
+renderSavedReports();
+
    render();
 </script>
-</body></html>
+</body></html>en 
