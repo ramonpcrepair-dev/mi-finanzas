@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#126b50">
+ <link rel="manifest" href="./manifest.json">
 <title>Mi Dinero</title>
 <style>
 :root{--green:#126b50;--green2:#e8f5ee;--bg:#f3f7f5;--ink:#17231e;--muted:#68766f;--red:#b33b3b;--line:#dce7e1;--white:#fff}
@@ -548,5 +549,13 @@ document.getElementById('saveFinancialReport')
 renderSavedReports();
 
    render();
+</script>
+ <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./Service-worker.js')
+      .catch(error => console.error('Error Service Worker:', error));
+  });
+}
 </script>
 </body></html>en 
