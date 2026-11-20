@@ -2,560 +2,582 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#126b50">
- <link rel="manifest" href="./manifest.json">
+<meta name="description" content="Aplicación personal para controlar ingresos, gastos, ahorros y deudas.">
+<link rel="manifest" href="./manifest.json">
 <title>Mi Dinero</title>
 <style>
-:root{--green:#126b50;--green2:#e8f5ee;--bg:#f3f7f5;--ink:#17231e;--muted:#68766f;--red:#b33b3b;--line:#dce7e1;--white:#fff}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
-header{background:linear-gradient(145deg,#0d503d,#16845f);color:white;padding:24px 18px 34px;border-radius:0 0 28px 28px}
-.top{display:flex;justify-content:space-between;align-items:center}.brand{font-weight:800;font-size:20px;letter-spacing:-.4px}.tag{font-size:11px;background:#ffffff22;padding:6px 9px;border-radius:30px}
-.balance-label{margin-top:25px;font-size:13px;color:#d8eee4}.balance{font-size:36px;font-weight:800;margin-top:3px;letter-spacing:-1px}
-main{max-width:780px;margin:auto;padding:15px}.summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:-13px}
-.card{background:var(--white);border:1px solid var(--line);border-radius:17px;padding:15px;box-shadow:0 5px 18px #173d2b0a}
-.small{font-size:12px;color:var(--muted)}.amount{font-size:18px;font-weight:800;margin-top:5px}.income{color:#14764d}.expense{color:var(--red)}
-nav{display:flex;gap:7px;overflow-x:auto;padding:17px 0 12px;scrollbar-width:none}nav button{white-space:nowrap;border:1px solid var(--line);background:white;color:var(--ink);border-radius:30px;padding:10px 13px;font-weight:700}nav button.active{background:var(--green);color:white;border-color:var(--green)}
-h2{font-size:17px;margin:3px 0 13px}h3{font-size:14px;margin:0 0 9px}.panel{display:none}.panel.active{display:block}
-label{display:block;font-size:12px;font-weight:700;margin:12px 0 6px}input,select{width:100%;padding:12px;border:1px solid #cbd8d1;border-radius:11px;background:white;font:inherit;color:var(--ink)}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-button.primary{width:100%;margin-top:14px;background:var(--green);color:white;border:0;border-radius:11px;padding:13px;font:inherit;font-weight:750}
-.list{display:flex;flex-direction:column;gap:8px;margin-top:10px}.item{display:flex;align-items:center;justify-content:space-between;gap:10px;background:white;border:1px solid var(--line);padding:12px;border-radius:12px}.item-title{font-weight:700}.item-meta{font-size:11px;color:var(--muted);margin-top:3px}.delete{border:0;background:#fff0f0;color:var(--red);border-radius:8px;padding:7px 9px}
-.notice{background:#fff8e5;border:1px solid #f0dfad;border-radius:12px;padding:12px;font-size:12px;color:#624c12;margin:13px 0}
-.empty{color:var(--muted);font-size:13px;padding:15px;text-align:center}.footer{color:var(--muted);font-size:11px;text-align:center;padding:22px 6px}
-.chart-wrap{height:210px;position:relative}.chart-wrap canvas{width:100%;height:100%;display:block}.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:8px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
-.progress{height:10px;background:#e8eeeb;border-radius:20px;overflow:hidden;margin:10px 0}.progress span{height:100%;display:block;background:#16845f;width:0%;transition:width .2s}.budgetline{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted)}
-@media(max-width:480px){
- body{font-size:14px}
- header{padding:18px 14px 27px;border-radius:0 0 22px 22px}
- .brand{font-size:18px}.tag{font-size:9px;padding:5px 7px}
- .balance-label{margin-top:19px;font-size:12px}
- .balance{font-size:clamp(27px,8vw,34px);letter-spacing:-.7px}
- main{padding:10px}
- .summary{gap:7px;margin-top:-10px}
- .card{padding:11px;border-radius:14px}
- .small{font-size:11px}.amount{font-size:clamp(14px,4vw,17px);margin-top:4px}
- nav{gap:6px;padding:13px 0 10px}
- nav button{font-size:12px;padding:9px 11px}
- h2{font-size:15px;margin:2px 0 10px}
- label{font-size:11px;margin:10px 0 5px}
- input,select{padding:10px;border-radius:9px;font-size:14px}
- button.primary{padding:11px;font-size:14px;margin-top:11px}
- .chart-wrap{height:155px}
- .chart-wrap[style*="190px"]{height:140px!important}
- .legend{gap:9px;font-size:10px}
- .item{padding:9px;gap:7px}
- .item-title{font-size:13px}.item-meta{font-size:10px}
- .delete{font-size:11px;padding:6px 8px}
- .notice{font-size:11px;padding:10px;margin:10px 0}
- .empty{font-size:12px;padding:12px}
- .footer{font-size:10px;padding:17px 5px}
+:root{
+ --green:#126b50;--green-dark:#0b4937;--green-light:#e8f5ee;
+ --bg:#f3f7f5;--surface:#fff;--ink:#17231e;--muted:#68766f;
+ --red:#b33b3b;--red-light:#fff0f0;--blue:#245b8f;
+ --line:#dce7e1;--shadow:0 8px 24px rgba(23,61,43,.07);
+ --radius:18px;
 }
-@media(min-width:600px){.summary{grid-template-columns:repeat(4,minmax(0,1fr))}.balance{font-size:42px}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+header{
+ background:linear-gradient(145deg,var(--green-dark),#16845f);
+ color:#fff;padding:22px 18px 36px;border-radius:0 0 28px 28px;
+}
+.top{max-width:780px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{font-weight:850;font-size:21px;letter-spacing:-.5px}
+.tag{font-size:10px;letter-spacing:.5px;background:#ffffff20;padding:7px 10px;border-radius:30px}
+.balance-area{max-width:780px;margin:23px auto 0}
+.balance-label{font-size:13px;color:#d8eee4}
+.balance{font-size:clamp(30px,8vw,42px);font-weight:850;margin-top:4px;letter-spacing:-1px;overflow-wrap:anywhere}
+.header-note{font-size:12px;color:#d8eee4;margin-top:5px}
+main{max-width:780px;margin:auto;padding:14px 15px 28px}
+.summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:-13px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:15px;box-shadow:var(--shadow)}
+.metric-label{font-size:12px;color:var(--muted)}
+.amount{font-size:clamp(16px,4.2vw,20px);font-weight:850;margin-top:5px;overflow-wrap:anywhere}
+.income{color:#14764d}.expense{color:var(--red)}
+nav{display:flex;gap:7px;overflow-x:auto;padding:17px 0 12px;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{white-space:nowrap;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:30px;padding:10px 14px;font-size:13px;font-weight:750}
+nav button.active{background:var(--green);color:#fff;border-color:var(--green)}
+.panel{display:none}.panel.active{display:block}
+h2{font-size:17px;margin:2px 0 13px;letter-spacing:-.2px}
+h3{font-size:14px;margin:0 0 9px}
+.section-heading{margin:19px 2px 10px}
+label{display:block;font-size:12px;font-weight:750;margin:12px 0 6px}
+input,select{width:100%;padding:12px;border:1px solid #cbd8d1;border-radius:11px;background:#fff;color:var(--ink);outline:none}
+input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px #126b5018}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button.primary,.action-button{border:0;border-radius:12px;padding:12px 14px;background:var(--green);color:#fff;font-weight:800}
+button.primary{width:100%;margin-top:14px}
+button.secondary{background:var(--blue)}
+button.danger{background:#8b2929}
+button.light{background:var(--green-light);color:var(--green)}
+.list{display:flex;flex-direction:column;gap:9px;margin-top:10px}
+.item{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);padding:12px;border-radius:13px}
+.item-left{min-width:0;flex:1}
+.item-title{font-weight:750;overflow-wrap:anywhere}
+.item-meta{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}
+.item-right{display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0}
+.item-amount{font-weight:850;text-align:right}
+.delete{border:0;background:var(--red-light);color:var(--red);border-radius:8px;padding:7px 9px;font-size:11px;font-weight:750}
+.notice{background:#fff8e5;border:1px solid #f0dfad;border-radius:12px;padding:12px;font-size:12px;color:#624c12;margin:13px 0}
+.empty{color:var(--muted);font-size:13px;padding:16px;text-align:center;background:#fff;border:1px dashed var(--line);border-radius:12px}
+.chart-wrap{height:205px;position:relative}
+.chart-wrap canvas{width:100%;height:100%;display:block}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:8px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.progress{height:10px;background:#e8eeeb;border-radius:20px;overflow:hidden;margin:11px 0}
+.progress span{height:100%;display:block;background:#16845f;width:0%;transition:width .2s}
+.budgetline{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted)}
+.button-row{display:flex;gap:9px;flex-wrap:wrap}
+.button-row button{flex:1;min-width:135px}
+.helper{font-size:12px;color:var(--muted);line-height:1.5}
+.report-card{margin-top:14px}
+.saved-report{padding:12px;border:1px solid var(--line);border-radius:13px;margin-top:9px;background:#fff}
+.saved-report-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.saved-report-name{font-weight:800;overflow-wrap:anywhere}
+.saved-report-date{font-size:11px;color:var(--muted);margin-top:3px}
+.saved-report-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.saved-report-actions button{border:0;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:750;background:var(--green-light);color:var(--green)}
+.saved-report-actions button:last-child{background:var(--red-light);color:var(--red)}
+.footer{color:var(--muted);font-size:11px;text-align:center;padding:22px 6px}
+@media(min-width:600px){.summary{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:480px){
+ body{font-size:14px}header{padding:18px 14px 29px;border-radius:0 0 22px 22px}
+ .brand{font-size:19px}.tag{font-size:9px;padding:6px 8px}
+ .balance-area{margin-top:19px}main{padding:10px 10px 24px}
+ .summary{gap:7px;margin-top:-10px}.card{padding:12px;border-radius:15px}
+ .metric-label{font-size:11px}.amount{font-size:clamp(14px,4vw,17px)}
+ nav{gap:6px;padding:13px 0 10px}nav button{font-size:12px;padding:9px 11px}
+ h2{font-size:15px;margin-bottom:10px}label{font-size:11px;margin:10px 0 5px}
+ input,select{padding:10px;border-radius:9px;font-size:14px}
+ button.primary,.action-button{padding:11px;font-size:14px}
+ .chart-wrap{height:160px}.chart-wrap.category{height:175px}
+ .item{padding:9px;gap:7px}.item-title{font-size:13px}.item-meta{font-size:10px}
+ .delete{font-size:10px;padding:6px 8px}.notice{font-size:11px;padding:10px}
+}
+@media print{
+ body{background:#fff}header{border-radius:0;padding:12px;color:#fff}
+ main{max-width:none;padding:8px}.no-print{display:none!important}
+ .card{box-shadow:none;break-inside:avoid}
+}
 </style>
 </head>
 <body>
-<header><div class="top"><div class="brand">💚 Mi Dinero</div><div class="tag">FINANZAS PERSONALES</div></div>
-<div class="balance-label">Balance disponible estimado</div><div class="balance" id="balance">RD$ 0.00</div>
-<div class="small" style="color:#d8eee4;margin-top:5px">Tus finanzas, claras y bajo control.</div></header>
+<header>
+ <div class="top"><div class="brand">💚 Mi Dinero</div><div class="tag">FINANZAS PERSONALES</div></div>
+ <div class="balance-area">
+  <div class="balance-label">Balance disponible estimado</div>
+  <div class="balance" id="balance">RD$ 0.00</div>
+  <div class="header-note">Tus finanzas, claras y bajo control.</div>
+ </div>
+</header>
 <main>
-<section class="summary">
-<div class="card"><div class="small">Ingresos</div><div class="amount income" id="totalIncome">RD$ 0.00</div></div>
-<div class="card"><div class="small">Gastos</div><div class="amount expense" id="totalExpense">RD$ 0.00</div></div>
-<div class="card"><div class="small">Ahorros registrados</div><div class="amount" id="totalSavings">RD$ 0.00</div></div>
-<div class="card"><div class="small">Deudas pendientes</div><div class="amount" id="totalDebt">RD$ 0.00</div></div>
-</section>
-<nav aria-label="Secciones">
-<button class="active" data-tab="inicio">Resumen</button><button data-tab="ingreso">+ Ingreso</button><button data-tab="gasto">− Gasto</button><button data-tab="ahorro">Ahorro</button><button data-tab="deuda">Deudas</button><button data-tab="compra">Compras</button>
-</nav>
-<section id="panel-inicio" class="panel active">
-<div class="card">
-<h2>Presupuesto mensual</h2>
-<label for="budget">Límite de gastos del mes (RD$)</label><input id="budget" type="number" min="0" step="0.01" placeholder="Ej. 25000">
-<div class="progress"><span id="budgetBar"></span></div><div class="budgetline"><span id="budgetSpent">Gastado: RD$ 0.00</span><strong id="budgetStatus">Define tu límite</strong></div>
-</div>
-<div class="card" style="margin-top:11px"><h2>Ingresos vs. gastos</h2><div class="chart-wrap"><canvas id="compareChart" aria-label="Gráfico de ingresos y gastos"></canvas></div><div class="legend"><span><i class="dot" style="background:#16845f"></i>Ingresos</span><span><i class="dot" style="background:#c44b4b"></i>Gastos</span></div></div>
-<div class="card" style="margin-top:11px"><h2>¿En qué gastas?</h2><div class="chart-wrap" style="height:190px"><canvas id="categoryChart" aria-label="Gráfico de gastos por categoría"></canvas></div><div id="categoryLegend" class="legend"></div></div>
-<h2 style="margin-top:18px">Movimientos recientes</h2><div id="recent" class="list"><div class="empty">Todavía no hay movimientos.</div></div>
-<div class="notice">Tus datos se guardan en el almacenamiento de este navegador y dispositivo. Exporta una copia de seguridad con frecuencia.</div>
-</section>
-<section id="panel-ingreso" class="panel"><div class="card"><h2>Registrar ingreso</h2><form data-kind="ingreso">
-<label>Descripción</label><input name="desc" placeholder="Ej. pago de trabajo" required>
-<div class="formgrid"><div><label>Monto (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" required></div><div><label>Fecha</label><input name="date" type="date" required></div></div>
-<label>Tipo de ingreso</label><select name="category"><option>Trabajo</option><option>Negocio</option><option>Venta</option><option>Ayuda familiar</option><option>Otro</option></select><button class="primary">Guardar ingreso</button></form></div></section>
-<section id="panel-gasto" class="panel"><div class="card"><h2>Registrar gasto</h2><form data-kind="gasto">
-<label>Descripción</label><input name="desc" placeholder="Ej. compra del supermercado" required>
-<div class="formgrid"><div><label>Monto (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" required></div><div><label>Fecha</label><input name="date" type="date" required></div></div>
-<label>Categoría</label><select name="category"><option>Comida</option><option>Transporte</option><option>Vivienda</option><option>Servicios</option><option>Salud</option><option>Educación</option><option>Familia</option><option>Entretenimiento</option><option>Compras personales</option><option>Otro</option></select><button class="primary">Guardar gasto</button></form></div></section>
-<section id="panel-ahorro" class="panel"><div class="card"><h2>Registrar ahorro</h2><form data-kind="ahorro"><label>Meta de ahorro</label><input name="desc" placeholder="Ej. fondo de emergencia" required><div class="formgrid"><div><label>Monto (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" required></div><div><label>Fecha</label><input name="date" type="date" required></div></div><button class="primary">Guardar ahorro</button></form></div></section>
-<section id="panel-deuda" class="panel"><div class="card"><h2>Registrar deuda pendiente</h2><form data-kind="deuda"><label>¿A quién o qué debes?</label><input name="desc" placeholder="Ej. préstamo personal" required><div class="formgrid"><div><label>Monto pendiente (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" required></div><div><label>Fecha</label><input name="date" type="date" required></div></div><button class="primary">Guardar deuda</button></form></div></section>
-<section id="panel-compra" class="panel"><div class="card"><h2>Planificar una compra</h2><form data-kind="compra"><label>¿Qué quieres comprar?</label><input name="desc" placeholder="Ej. nevera" required><div class="formgrid"><div><label>Precio estimado (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" required></div><div><label>Fecha deseada</label><input name="date" type="date" required></div></div><button class="primary">Guardar plan</button></form></div></section>
-<section class="card" style="margin-top:16px"><h2>Tus datos</h2><p class="small">La aplicación no está conectada a bancos. Tus registros permanecen en este navegador; si borras sus datos o cambias de dispositivo podrías perderlos.</p>
-<button class="primary" id="export" type="button">Exportar copia de seguridad</button>
-<button class="primary" id="import" type="button" style="background:#245b8f">Importar copia de seguridad</button>
-<input id="backupFile" type="file" accept=".json,application/json" style="display:none">
-<p class="small">Al importar, los registros actuales serán reemplazados por los de la copia. Antes se guardará una copia de seguridad de los datos actuales.</p>
-<button class="primary" id="clear" type="button" style="background:#8b2929">Borrar todos los registros</button></section>
-<div class="footer">Mi Dinero · Finanzas personales en RD$ · No conectada a bancos</div>
+ <section class="summary" aria-label="Resumen financiero">
+  <div class="card"><div class="metric-label">Ingresos</div><div class="amount income" id="totalIncome">RD$ 0.00</div></div>
+  <div class="card"><div class="metric-label">Gastos</div><div class="amount expense" id="totalExpense">RD$ 0.00</div></div>
+  <div class="card"><div class="metric-label">Ahorros registrados</div><div class="amount" id="totalSavings">RD$ 0.00</div></div>
+  <div class="card"><div class="metric-label">Deudas pendientes</div><div class="amount" id="totalDebt">RD$ 0.00</div></div>
+ </section>
+
+ <nav class="no-print" aria-label="Secciones">
+  <button class="active" data-tab="inicio">Resumen</button>
+  <button data-tab="ingreso">＋ Ingreso</button>
+  <button data-tab="gasto">− Gasto</button>
+  <button data-tab="ahorro">Ahorro</button>
+  <button data-tab="deuda">Deudas</button>
+  <button data-tab="compra">Compras</button>
+  <button data-tab="datos">Datos e informes</button>
+ </nav>
+
+ <section id="panel-inicio" class="panel active">
+  <div class="card">
+   <h2>Presupuesto mensual</h2>
+   <label for="budget">Límite de gastos del mes (RD$)</label>
+   <input id="budget" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ej. 25000">
+   <div class="progress"><span id="budgetBar"></span></div>
+   <div class="budgetline"><span id="budgetSpent">Gastado este mes: RD$ 0.00</span><strong id="budgetStatus">Define tu límite</strong></div>
+  </div>
+  <div class="card" style="margin-top:11px">
+   <h2>Ingresos vs. gastos del mes</h2>
+   <div class="chart-wrap"><canvas id="compareChart" aria-label="Gráfico de ingresos y gastos"></canvas></div>
+   <div class="legend"><span><i class="dot" style="background:#16845f"></i>Ingresos</span><span><i class="dot" style="background:#c44b4b"></i>Gastos</span></div>
+  </div>
+  <div class="card" style="margin-top:11px">
+   <h2>¿En qué gastas?</h2>
+   <div class="chart-wrap category"><canvas id="categoryChart" aria-label="Gráfico de gastos por categoría"></canvas></div>
+   <div id="categoryLegend" class="legend"></div>
+  </div>
+  <h2 class="section-heading">Movimientos recientes</h2>
+  <div id="recent" class="list"><div class="empty">Todavía no hay movimientos.</div></div>
+  <div class="notice">Tus datos se guardan en este dispositivo. Exporta una copia de seguridad con frecuencia para poder recuperarlos si cambias de teléfono o borras los datos de la aplicación.</div>
+ </section>
+
+ <section id="panel-ingreso" class="panel">
+  <div class="card"><h2>Registrar ingreso</h2><form data-kind="ingreso">
+   <label>Descripción</label><input name="desc" placeholder="Ej. pago de trabajo" required>
+   <div class="formgrid"><div><label>Monto (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" inputmode="decimal" required></div><div><label>Fecha</label><input name="date" type="date" required></div></div>
+   <label>Tipo de ingreso</label><select name="category"><option>Trabajo</option><option>Negocio</option><option>Venta</option><option>Ayuda familiar</option><option>Otro</option></select>
+   <button class="primary">Guardar ingreso</button>
+  </form></div>
+ </section>
+
+ <section id="panel-gasto" class="panel">
+  <div class="card"><h2>Registrar gasto</h2><form data-kind="gasto">
+   <label>Descripción</label><input name="desc" placeholder="Ej. compra del supermercado" required>
+   <div class="formgrid"><div><label>Monto (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" inputmode="decimal" required></div><div><label>Fecha</label><input name="date" type="date" required></div></div>
+   <label>Categoría</label><select name="category"><option>Comida</option><option>Transporte</option><option>Vivienda</option><option>Servicios</option><option>Salud</option><option>Educación</option><option>Familia</option><option>Entretenimiento</option><option>Compras personales</option><option>Otro</option></select>
+   <button class="primary">Guardar gasto</button>
+  </form></div>
+ </section>
+
+ <section id="panel-ahorro" class="panel">
+  <div class="card"><h2>Registrar ahorro</h2><form data-kind="ahorro">
+   <label>Meta de ahorro</label><input name="desc" placeholder="Ej. fondo de emergencia" required>
+   <div class="formgrid"><div><label>Monto (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" inputmode="decimal" required></div><div><label>Fecha</label><input name="date" type="date" required></div></div>
+   <button class="primary">Guardar ahorro</button>
+  </form></div>
+ </section>
+
+ <section id="panel-deuda" class="panel">
+  <div class="card"><h2>Registrar deuda pendiente</h2><form data-kind="deuda">
+   <label>¿A quién o qué debes?</label><input name="desc" placeholder="Ej. préstamo personal" required>
+   <div class="formgrid"><div><label>Monto pendiente (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" inputmode="decimal" required></div><div><label>Fecha</label><input name="date" type="date" required></div></div>
+   <button class="primary">Guardar deuda</button>
+  </form></div>
+ </section>
+
+ <section id="panel-compra" class="panel">
+  <div class="card"><h2>Planificar una compra</h2><form data-kind="compra">
+   <label>¿Qué quieres comprar?</label><input name="desc" placeholder="Ej. nevera" required>
+   <div class="formgrid"><div><label>Precio estimado (RD$)</label><input name="amount" type="number" min="0.01" step="0.01" inputmode="decimal" required></div><div><label>Fecha deseada</label><input name="date" type="date" required></div></div>
+   <button class="primary">Guardar plan</button>
+  </form></div>
+ </section>
+
+ <section id="panel-datos" class="panel">
+  <div class="card">
+   <h2>Copias de seguridad</h2>
+   <p class="helper">Exporta tus registros para guardarlos o trasladarlos a otro teléfono. Al importar una copia, reemplazará los registros actuales.</p>
+   <button class="primary" id="export" type="button">⬇ Exportar copia de seguridad</button>
+   <button class="primary secondary" id="import" type="button">⬆ Importar copia de seguridad</button>
+   <input id="backupFile" type="file" accept=".json,application/json" hidden>
+   <p class="helper">Antes de importar, la aplicación intentará guardar una copia de los datos que ya tienes en este teléfono.</p>
+   <button class="primary danger" id="clear" type="button">Borrar todos los registros</button>
+  </div>
+
+  <div class="card report-card">
+   <h2>Informes financieros</h2>
+   <p class="helper">Prepara un informe con tus totales y el historial completo de movimientos.</p>
+   <div class="button-row">
+    <button class="action-button" id="printReport" type="button">🖨️ Imprimir / PDF</button>
+    <button class="action-button light" id="shareReport" type="button">📤 Compartir</button>
+   </div>
+  </div>
+
+  <div class="card report-card">
+   <h2>Informes guardados</h2>
+   <p class="helper">Guarda una fotografía de tus cifras actuales para consultarla más adelante.</p>
+   <button class="primary" id="saveFinancialReport" type="button">💾 Guardar informe actual</button>
+   <div id="savedReportsList" style="margin-top:12px"></div>
+  </div>
+  <p class="helper" style="text-align:center;margin:14px 4px">Mi Dinero no está conectada a bancos. Tus registros permanecen en el almacenamiento de este dispositivo.</p>
+ </section>
+
+ <div class="footer">Mi Dinero · Finanzas personales en RD$</div>
 </main>
+
 <script>
-const KEY='miDineroRegistrosV1', BUDGET_KEY='miDineroPresupuestoV1';
-let records=[];try{records=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(records))records=[]}catch(e){records=[]}
-const today=new Date(),localDate=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
-document.querySelectorAll('input[type=date]').forEach(x=>x.value=localDate);
-const money=n=>new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',minimumFractionDigits:2}).format(n);
-const monthKey=d=>String(d||'').slice(0,7), currentMonth=localDate.slice(0,7);
-let budget=Number(localStorage.getItem(BUDGET_KEY)||0);document.getElementById('budget').value=budget||'';
-function save(){localStorage.setItem(KEY,JSON.stringify(records));render()}
-function total(kind,items=records){return items.filter(r=>r.kind===kind).reduce((a,r)=>a+Number(r.amount||0),0)}
-function monthRecords(){return records.filter(r=>monthKey(r.date)===currentMonth)}
+'use strict';
+const KEY='miDineroRegistrosV1';
+const BUDGET_KEY='miDineroPresupuestoV1';
+const SAVED_REPORTS_KEY='miDineroInformesGuardadosV1';
+const BACKUP_BEFORE_IMPORT_KEY='miDineroAntesDeImportar_v1';
+
+function readArray(key){
+ try{const value=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(value)?value:[]}
+ catch(e){return []}
+}
+let records=readArray(KEY);
+let savedReports=readArray(SAVED_REPORTS_KEY);
+let budget=Number(localStorage.getItem(BUDGET_KEY)||0);
+if(!Number.isFinite(budget)||budget<0)budget=0;
+
+const now=new Date();
+const localDate=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,10);
+document.querySelectorAll('input[type="date"]').forEach(input=>input.value=localDate);
+document.getElementById('budget').value=budget||'';
+
+const money=n=>new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0);
+const monthKey=date=>String(date||'').slice(0,7);
+const currentMonth=localDate.slice(0,7);
+const kindNames={ingreso:'Ingreso',gasto:'Gasto',ahorro:'Ahorro',deuda:'Deuda',compra:'Compra planeada'};
+
+function total(kind,items=records){
+ return items.filter(record=>record.kind===kind).reduce((sum,record)=>sum+Number(record.amount||0),0);
+}
+function monthRecords(){return records.filter(record=>monthKey(record.date)===currentMonth)}
+function persistRecords(){localStorage.setItem(KEY,JSON.stringify(records));render()}
+function saveReportsStorage(){localStorage.setItem(SAVED_REPORTS_KEY,JSON.stringify(savedReports))}
+
 function drawCompare(items){
- const c=document.getElementById('compareChart'),ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,dpr=window.devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
- const vals=[total('ingreso',items),total('gasto',items)],max=Math.max(...vals,1),base=h-28,top=15,barW=Math.min(65,w/4),gap=35,start=w/2-(barW*2+gap)/2;
- vals.forEach((v,i)=>{const bh=(base-top)*v/max,x=start+i*(barW+gap);ctx.fillStyle=i===0?'#16845f':'#c44b4b';ctx.beginPath();ctx.roundRect(x,base-bh,barW,bh,7);ctx.fill();ctx.fillStyle='#52635a';ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillText(i===0?'Ingresos':'Gastos',x+barW/2,h-8);ctx.fillStyle='#17231e';ctx.font='bold 11px system-ui';ctx.fillText(money(v),x+barW/2,Math.max(11,base-bh-7));});
-}
-function drawCategories(items){
- const c=document.getElementById('categoryChart'),ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,dpr=window.devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
- const sums={};items.filter(r=>r.kind==='gasto').forEach(r=>{const k=r.category||'Otro';sums[k]=(sums[k]||0)+Number(r.amount||0)});
- const entries=Object.entries(sums).sort((a,b)=>b[1]-a[1]),sum=entries.reduce((a,x)=>a+x[1],0),legend=document.getElementById('categoryLegend');legend.innerHTML='';
- if(!sum){ctx.fillStyle='#68766f';ctx.font='13px system-ui';ctx.textAlign='center';ctx.fillText('Registra gastos para ver el gráfico',w/2,h/2);return}
- const colors=['#16845f','#e0a33a','#5486c7','#c44b4b','#8c69b3','#42a6a0','#d17a45','#718078','#b27b9d'];let angle=-Math.PI/2;const cx=w/2,cy=h/2,r=Math.min(73,h/2-5);
- entries.forEach(([name,val],i)=>{const next=angle+val/sum*Math.PI*2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,angle,next);ctx.closePath();ctx.fillStyle=colors[i%colors.length];ctx.fill();angle=next;
- const span=document.createElement('span');span.innerHTML='<i class="dot" style="background:'+colors[i%colors.length]+'"></i>';span.append(document.createTextNode(name+' '+Math.round(val/sum*100)+'%'));legend.append(span);
+ const canvas=document.getElementById('compareChart');
+ const ctx=canvas.getContext('2d');
+ const width=canvas.clientWidth,height=canvas.clientHeight,dpr=window.devicePixelRatio||1;
+ canvas.width=Math.max(1,width*dpr);canvas.height=Math.max(1,height*dpr);
+ ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);
+ const values=[total('ingreso',items),total('gasto',items)];
+ const max=Math.max(...values,1),base=height-29,top=18;
+ const barWidth=Math.min(66,width/4),gap=35,start=width/2-(barWidth*2+gap)/2;
+ values.forEach((value,index)=>{
+  const barHeight=(base-top)*value/max,x=start+index*(barWidth+gap);
+  ctx.fillStyle=index===0?'#16845f':'#c44b4b';
+  ctx.beginPath();
+  if(ctx.roundRect)ctx.roundRect(x,base-barHeight,barWidth,barHeight,7);
+  else ctx.rect(x,base-barHeight,barWidth,barHeight);
+  ctx.fill();
+  ctx.fillStyle='#52635a';ctx.font='11px system-ui';ctx.textAlign='center';
+  ctx.fillText(index===0?'Ingresos':'Gastos',x+barWidth/2,height-8);
+  ctx.fillStyle='#17231e';ctx.font='bold 10px system-ui';
+  const label=money(value);
+  ctx.fillText(label,x+barWidth/2,Math.max(11,base-barHeight-7));
  });
- ctx.fillStyle='#17231e';ctx.textAlign='center';ctx.font='bold 13px system-ui';ctx.fillText(money(sum),cx,cy+4);ctx.fillStyle='#68766f';ctx.font='10px system-ui';ctx.fillText('Total gastado',cx,cy+19);
 }
+
+function drawCategories(items){
+ const canvas=document.getElementById('categoryChart'),ctx=canvas.getContext('2d');
+ const width=canvas.clientWidth,height=canvas.clientHeight,dpr=window.devicePixelRatio||1;
+ canvas.width=Math.max(1,width*dpr);canvas.height=Math.max(1,height*dpr);
+ ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);
+ const totals={};
+ items.filter(record=>record.kind==='gasto').forEach(record=>{
+  const category=record.category||'Otro';
+  totals[category]=(totals[category]||0)+Number(record.amount||0);
+ });
+ const entries=Object.entries(totals).sort((a,b)=>b[1]-a[1]);
+ const sum=entries.reduce((acc,item)=>acc+item[1],0);
+ const legend=document.getElementById('categoryLegend');legend.innerHTML='';
+ if(!sum){
+  ctx.fillStyle='#68766f';ctx.font='13px system-ui';ctx.textAlign='center';
+  ctx.fillText('Registra gastos para ver el gráfico',width/2,height/2);return;
+ }
+ const colors=['#16845f','#e0a33a','#5486c7','#c44b4b','#8c69b3','#42a6a0','#d17a45','#718078','#b27b9d'];
+ let angle=-Math.PI/2;
+ const cx=width/2,cy=height/2,r=Math.min(70,height/2-5);
+ entries.forEach(([name,value],index)=>{
+  const next=angle+value/sum*Math.PI*2;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,angle,next);ctx.closePath();
+  ctx.fillStyle=colors[index%colors.length];ctx.fill();angle=next;
+  const entry=document.createElement('span');
+  const dot=document.createElement('i');dot.className='dot';dot.style.background=colors[index%colors.length];
+  entry.append(dot,document.createTextNode(name+' '+Math.round(value/sum*100)+'%'));
+  legend.append(entry);
+ });
+ ctx.fillStyle='#17231e';ctx.textAlign='center';ctx.font='bold 12px system-ui';ctx.fillText(money(sum),cx,cy+3);
+ ctx.fillStyle='#68766f';ctx.font='10px system-ui';ctx.fillText('Total gastado',cx,cy+18);
+}
+
 function render(){
- const inc=total('ingreso'),exp=total('gasto'),sav=total('ahorro'),debt=total('deuda');
- document.getElementById('totalIncome').textContent=money(inc);document.getElementById('totalExpense').textContent=money(exp);document.getElementById('totalSavings').textContent=money(sav);document.getElementById('totalDebt').textContent=money(debt);document.getElementById('balance').textContent=money(inc-exp-sav);
- const thisMonth=monthRecords(),spent=total('gasto',thisMonth),bar=document.getElementById('budgetBar'),status=document.getElementById('budgetStatus');
+ const income=total('ingreso'),expense=total('gasto'),savings=total('ahorro'),debt=total('deuda');
+ document.getElementById('totalIncome').textContent=money(income);
+ document.getElementById('totalExpense').textContent=money(expense);
+ document.getElementById('totalSavings').textContent=money(savings);
+ document.getElementById('totalDebt').textContent=money(debt);
+ document.getElementById('balance').textContent=money(income-expense-savings);
+
+ const thisMonth=monthRecords(),spent=total('gasto',thisMonth);
+ const bar=document.getElementById('budgetBar'),status=document.getElementById('budgetStatus');
  document.getElementById('budgetSpent').textContent='Gastado este mes: '+money(spent);
- const pct=budget>0?Math.min(100,spent/budget*100):0;bar.style.width=pct+'%';bar.style.background=budget>0&&spent>budget?'#c44b4b':'#16845f';
- status.textContent=budget>0?(spent>budget?'Superaste el límite':Math.round(pct)+'% utilizado'):'Define tu límite';
+ const percentage=budget>0?Math.min(100,spent/budget*100):0;
+ bar.style.width=percentage+'%';
+ bar.style.background=budget>0&&spent>budget?'#c44b4b':'#16845f';
+ status.textContent=budget>0?(spent>budget?'Superaste el límite':Math.round(percentage)+'% utilizado'):'Define tu límite';
+
  drawCompare(thisMonth);drawCategories(thisMonth);
  const box=document.getElementById('recent');box.innerHTML='';
- if(!records.length){box.innerHTML='<div class="empty">Todavía no hay movimientos. Registra tu primer ingreso o gasto.</div>';return}
- [...records].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,30).forEach(r=>{
-  const el=document.createElement('div');el.className='item';const left=document.createElement('div');left.style.minWidth='0';
-  const title=document.createElement('div');title.className='item-title';title.textContent=r.desc;
-  const meta=document.createElement('div');meta.className='item-meta';meta.textContent=(r.category||'General')+' · '+(r.date||'')+' · '+({ingreso:'Ingreso',gasto:'Gasto',ahorro:'Ahorro',deuda:'Deuda',compra:'Compra planeada'}[r.kind]||r.kind);
-  const amount=document.createElement('div');amount.style.fontWeight='800';amount.style.textAlign='right';amount.textContent=money(r.amount);if(r.kind==='gasto')amount.style.color='var(--red)';if(r.kind==='ingreso')amount.style.color='var(--green)';
-  const del=document.createElement('button');del.className='delete';del.textContent='Eliminar';del.type='button';del.addEventListener('click',()=>{if(confirm('¿Eliminar este registro?')){records=records.filter(x=>x.id!==r.id);save()}});
-  const right=document.createElement('div');right.style.display='flex';right.style.flexDirection='column';right.style.alignItems='flex-end';right.style.gap='6px';right.append(amount,del);left.append(title,meta);el.append(left,right);box.append(el);
+ if(!records.length){
+  box.innerHTML='<div class="empty">Todavía no hay movimientos. Registra tu primer ingreso o gasto.</div>';return;
+ }
+ [...records].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,30).forEach(record=>{
+  const item=document.createElement('div');item.className='item';
+  const left=document.createElement('div');left.className='item-left';
+  const title=document.createElement('div');title.className='item-title';title.textContent=record.desc||'Sin descripción';
+  const meta=document.createElement('div');meta.className='item-meta';
+  meta.textContent=(record.category||'General')+' · '+(record.date||'')+' · '+(kindNames[record.kind]||record.kind);
+  left.append(title,meta);
+  const right=document.createElement('div');right.className='item-right';
+  const amount=document.createElement('div');amount.className='item-amount';amount.textContent=money(record.amount);
+  if(record.kind==='gasto')amount.style.color='var(--red)';
+  if(record.kind==='ingreso')amount.style.color='var(--green)';
+  const remove=document.createElement('button');remove.className='delete';remove.type='button';remove.textContent='Eliminar';
+  remove.addEventListener('click',()=>{
+   if(confirm('¿Eliminar este registro?')){
+    records=records.filter(item=>item.id!==record.id);persistRecords();
+   }
+  });
+  right.append(amount,remove);item.append(left,right);box.append(item);
  });
 }
-document.querySelectorAll('nav button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+btn.dataset.tab));if(btn.dataset.tab==='inicio')render()}));
-document.querySelectorAll('form[data-kind]').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(form),amount=Number(fd.get('amount'));if(!Number.isFinite(amount)||amount<=0){alert('Escribe un monto válido.');return}records.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),kind:form.dataset.kind,desc:String(fd.get('desc')).trim(),amount,date:fd.get('date')||localDate,category:fd.get('category')||({ahorro:'Meta de ahorro',deuda:'Deuda',compra:'Compra planeada'}[form.dataset.kind])});save();form.reset();form.querySelector('input[type=date]').value=localDate;document.querySelector('[data-tab="inicio"]').click();alert('¡Registro guardado!')}));
-document.getElementById('budget').addEventListener('change',e=>{budget=Math.max(0,Number(e.target.value)||0);localStorage.setItem(BUDGET_KEY,String(budget));render()});
+
+function showTab(tab){
+ document.querySelectorAll('nav button').forEach(button=>button.classList.toggle('active',button.dataset.tab===tab));
+ document.querySelectorAll('.panel').forEach(panel=>panel.classList.toggle('active',panel.id==='panel-'+tab));
+ if(tab==='inicio')render();
+}
+document.querySelectorAll('nav button').forEach(button=>button.addEventListener('click',()=>showTab(button.dataset.tab)));
+
+document.querySelectorAll('form[data-kind]').forEach(form=>{
+ form.addEventListener('submit',event=>{
+  event.preventDefault();
+  const data=new FormData(form),amount=Number(data.get('amount'));
+  if(!Number.isFinite(amount)||amount<=0){alert('Escribe un monto válido.');return}
+  const kind=form.dataset.kind;
+  records.push({
+   id:Date.now().toString(36)+Math.random().toString(36).slice(2,8),
+   kind,desc:String(data.get('desc')||'').trim(),amount,
+   date:String(data.get('date')||localDate),
+   category:String(data.get('category')||({ahorro:'Meta de ahorro',deuda:'Deuda',compra:'Compra planeada'}[kind]))
+  });
+  try{persistRecords()}catch(error){records.pop();alert('No se pudo guardar. Comprueba el espacio disponible en el teléfono.');return}
+  form.reset();
+  const dateInput=form.querySelector('input[type="date"]');if(dateInput)dateInput.value=localDate;
+  showTab('inicio');alert('¡Registro guardado!');
+ });
+});
+
+document.getElementById('budget').addEventListener('change',event=>{
+ budget=Math.max(0,Number(event.target.value)||0);
+ try{localStorage.setItem(BUDGET_KEY,String(budget));render()}
+ catch(error){alert('No se pudo guardar el presupuesto en este dispositivo.')}
+});
 
 document.getElementById('export').addEventListener('click',async()=>{
- if(!confirm('¿Deseas exportar una copia de seguridad?')){
-  return;
- }
-
- const backup={records,budget,exportedAt:new Date().toISOString()};
- const contenido=JSON.stringify(backup,null,2);
- const blob=new Blob([contenido],{type:'application/json'});
-
+ if(!confirm('¿Deseas exportar una copia de seguridad?'))return;
+ const backup={app:'Mi Dinero',version:1,records,budget,exportedAt:new Date().toISOString()};
+ const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
  try{
   if(window.showSaveFilePicker){
    const handle=await window.showSaveFilePicker({
     suggestedName:'mi-dinero-copia.json',
     types:[{description:'Copia de seguridad',accept:{'application/json':['.json']}}]
    });
-   const writable=await handle.createWritable();
-   await writable.write(blob);
-   await writable.close();
+   const writable=await handle.createWritable();await writable.write(blob);await writable.close();
   }else{
-   const url=URL.createObjectURL(blob);
-   const a=document.createElement('a');
-   a.href=url;
-   a.download='mi-dinero-copia.json';
-   a.click();
-   setTimeout(()=>URL.revokeObjectURL(url),1000);
+   const url=URL.createObjectURL(blob),link=document.createElement('a');
+   link.href=url;link.download='mi-dinero-copia.json';document.body.appendChild(link);link.click();link.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),1500);
   }
- }catch(err){
-  if(err.name!=='AbortError'){
-   alert('No se pudo guardar la copia: '+err.message);
-  }
- }
+ }catch(error){if(error.name!=='AbortError')alert('No se pudo guardar la copia: '+error.message)}
 });
 
 document.getElementById('import').addEventListener('click',()=>{
-  if(confirm('¿Deseas seleccionar una copia de seguridad para importar?')){
-    document.getElementById('backupFile').click();
-  }
+ if(confirm('¿Deseas seleccionar una copia de seguridad para importar?'))document.getElementById('backupFile').click();
 });
-document.getElementById('backupFile').addEventListener('change',async e=>{
- const file=e.target.files&&e.target.files[0];if(!file)return;
+document.getElementById('backupFile').addEventListener('change',async event=>{
+ const file=event.target.files&&event.target.files[0];if(!file)return;
  try{
   const parsed=JSON.parse(await file.text());
-  const incoming=Array.isArray(parsed)?parsed:parsed&&Array.isArray(parsed.records)?parsed.records:null;
+  const incoming=Array.isArray(parsed)?parsed:(parsed&&Array.isArray(parsed.records)?parsed.records:null);
   if(!incoming)throw new Error('El archivo no tiene el formato de copia de Mi Dinero.');
   const validKinds=['ingreso','gasto','ahorro','deuda','compra'];
-  const clean=incoming.map((r,i)=>{
-   if(!r||typeof r!=='object'||!validKinds.includes(String(r.kind||'').toLowerCase())||!String(r.desc||'').trim()||!Number.isFinite(Number(r.amount))||Number(r.amount)<=0||!String(r.date||''))throw new Error('El registro '+(i+1)+' no es válido. No se importó nada.');
-   return {...r,kind:String(r.kind).toLowerCase(),desc:String(r.desc).trim(),amount:Number(r.amount),date:String(r.date),category:String(r.category||'General'),id:String(r.id||('restored-'+i+'-'+Date.now()))};
+  const clean=incoming.map((record,index)=>{
+   if(!record||typeof record!=='object'||!validKinds.includes(String(record.kind||'').toLowerCase())||
+    !String(record.desc||'').trim()||!Number.isFinite(Number(record.amount))||Number(record.amount)<=0||
+    !/^\d{4}-\d{2}-\d{2}$/.test(String(record.date||''))){
+    throw new Error('El registro '+(index+1)+' no es válido. No se importó nada.');
+   }
+   return {...record,kind:String(record.kind).toLowerCase(),desc:String(record.desc).trim(),
+    amount:Number(record.amount),date:String(record.date),category:String(record.category||'General'),
+    id:String(record.id||('restored-'+index+'-'+Date.now()))};
   });
-  const incomingBudget=parsed&&!Array.isArray(parsed)&&Number.isFinite(Number(parsed.budget))?Math.max(0,Number(parsed.budget)):budget;
-  if(!confirm('Se encontraron '+clean.length+' registros. Al continuar, reemplazarán los registros actuales. Antes guardaremos los datos actuales en este teléfono. ¿Deseas continuar?')){e.target.value='';return;}
+  const importedBudget=parsed&&!Array.isArray(parsed)&&Number.isFinite(Number(parsed.budget))?Math.max(0,Number(parsed.budget)):budget;
+  if(!confirm('Se encontraron '+clean.length+' registros. Reemplazarán los registros actuales. Antes guardaremos una copia de los datos actuales. ¿Continuar?'))return;
   const oldState={records,budget,backedUpAt:new Date().toISOString()};
-  try{
-   localStorage.setItem('miDineroAntesDeImportar_v1',JSON.stringify(oldState));
-   localStorage.setItem(KEY,JSON.stringify(clean));
-   localStorage.setItem(BUDGET_KEY,String(incomingBudget));
-  }catch(storageError){
-   try{localStorage.setItem(KEY,JSON.stringify(records));localStorage.setItem(BUDGET_KEY,String(budget));}catch(rollbackError){}
-   throw new Error('No se pudo guardar la restauración. Tus datos anteriores se conservaron si el teléfono permitió guardar la copia previa.');
-  }
-  records=clean;budget=incomingBudget;document.getElementById('budget').value=budget||'';render();
-  alert('Copia importada correctamente. Se recuperaron '+records.length+' registros.');
- }catch(err){alert('No se pudo importar la copia: '+err.message);}
- e.target.value='';
+  localStorage.setItem(BACKUP_BEFORE_IMPORT_KEY,JSON.stringify(oldState));
+  localStorage.setItem(KEY,JSON.stringify(clean));
+  localStorage.setItem(BUDGET_KEY,String(importedBudget));
+  records=clean;budget=importedBudget;document.getElementById('budget').value=budget||'';
+  render();alert('Copia importada correctamente. Se recuperaron '+records.length+' registros.');
+ }catch(error){alert('No se pudo importar la copia: '+error.message)}
+ finally{event.target.value=''}
 });
-document.getElementById('clear').addEventListener('click',()=>{if(confirm('¿Seguro que deseas borrar TODOS los registros? Esta acción no se puede deshacer.')){records=[];save()}});
-window.addEventListener('resize',()=>{clearTimeout(window._chartTimer);window._chartTimer=setTimeout(render,120)});
 
-// ===== INFORMES: IMPRIMIR Y COMPARTIR =====
-
-const reportTools = document.createElement('section');
-reportTools.className = 'card';
-reportTools.style.margin = '15px 0';
-reportTools.innerHTML = `
- <h2>Informes financieros</h2>
- <p>Todos tus movimientos registrados</p>
- <div style="display:flex;gap:10px;flex-wrap:wrap">
-  <button type="button" id="printReport" class="primary">
-   🖨️ Imprimir
-</button>
-
-  <button type="button" id="shareReport" class="primary">
-   📤 Compartir informe
-  </button>
- </div>
-`;
-
-document.querySelector('main')?.prepend(reportTools);
-
-function createFinancialReport(){
- const kinds = {
-  ingreso:'Ingresos',
-  gasto:'Gastos',
-  ahorro:'Ahorros',
-  deuda:'Deudas',
-  compra:'Compras planeadas'
- };
-
- const sums = {
-  ingreso:total('ingreso'),
-  gasto:total('gasto'),
-  ahorro:total('ahorro'),
-  deuda:total('deuda'),
-  compra:total('compra')
- };
-
- const balance = sums.ingreso - sums.gasto - sums.ahorro;
-
- const lines = [...records].sort((a,b)=>
-  (a.date||'').localeCompare(b.date||'')
- );
-
- const rows = lines.map(r => `
-  <tr>
-   <td>${escapeHTML(r.date||'')}</td>
-   <td>${escapeHTML(kinds[r.kind]||r.kind)}</td>
-   <td>${escapeHTML(r.desc||'')}</td>
-   <td>${escapeHTML(r.category||'General')}</td>
-   <td style="text-align:right">${money(r.amount)}</td>
-  </tr>
- `).join('');
-
- return {
-  sums,
-  balance,
-  rows,
-  lines,
-  text: [
-   'MI DINERO - INFORME FINANCIERO',
-   'Fecha: '+new Date().toLocaleDateString('es-DO'),
-   '',
-   ...Object.keys(kinds).map(k=>kinds[k]+': '+money(sums[k])),
-   'Balance: '+money(balance),
-   '',
-   'HISTORIAL COMPLETO',
-   ...lines.map(r=>
-    `${r.date||''} | ${kinds[r.kind]||r.kind} | ${r.desc||''} | ${money(r.amount)}`
-   )
-  ].join('\n')
- };
-}
+document.getElementById('clear').addEventListener('click',()=>{
+ if(!confirm('¿Seguro que deseas borrar TODOS los registros? Esta acción no se puede deshacer.'))return;
+ records=[];persistRecords();
+});
 
 function escapeHTML(value){
- return String(value).replace(/[&<>"']/g,c=>({
-  '&':'&amp;','<':'&lt;','>':'&gt;',
-  '"':'&quot;',"'":'&#39;'
- }[c]));
+ return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 }
 
+function createFinancialReport(){
+ const sums={ingreso:total('ingreso'),gasto:total('gasto'),ahorro:total('ahorro'),deuda:total('deuda'),compra:total('compra')};
+ const balance=sums.ingreso-sums.gasto-sums.ahorro;
+ const lines=[...records].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+ const rows=lines.map(record=>`<tr>
+  <td>${escapeHTML(record.date||'')}</td>
+  <td>${escapeHTML(kindNames[record.kind]||record.kind)}</td>
+  <td>${escapeHTML(record.desc||'')}</td>
+  <td>${escapeHTML(record.category||'General')}</td>
+  <td class="money">${money(record.amount)}</td>
+ </tr>`).join('');
+ const textLines=[
+  'MI DINERO - INFORME FINANCIERO','Fecha: '+new Date().toLocaleDateString('es-DO'),'',
+  'Ingresos: '+money(sums.ingreso),'Gastos: '+money(sums.gasto),
+  'Ahorros: '+money(sums.ahorro),'Deudas pendientes: '+money(sums.deuda),
+  'Compras planeadas: '+money(sums.compra),'Balance: '+money(balance),'',
+  'HISTORIAL COMPLETO',
+  ...lines.map(record=>`${record.date||''} | ${kindNames[record.kind]||record.kind} | ${record.desc||''} | ${money(record.amount)}`)
+ ];
+ return {sums,balance,rows,lines,text:textLines.join('\n')};
+}
 
 function reportHTML(report){
- return `
- <!DOCTYPE html>
- <html lang="es">
- <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width,initial-scale=1">
- <title>Informe Mi Dinero</title>
+ const labels={ingreso:'Ingresos',gasto:'Gastos',ahorro:'Ahorros',deuda:'Deudas pendientes',compra:'Compras planeadas'};
+ const summary=Object.entries(report.sums).map(([key,value])=>`<div class="box"><strong>${labels[key]}</strong><p>${money(value)}</p></div>`).join('');
+ return `<!doctype html><html lang="es"><head><meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1"><title>Informe Mi Dinero</title>
  <style>
- body{font-family:Arial,sans-serif;padding:20px;color:#222}
- h1,h2{text-align:center}
- .summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
- .box{border:1px solid #ccc;padding:12px;border-radius:8px}
- table{width:100%;border-collapse:collapse;margin-top:20px}
- th,td{border:1px solid #ddd;padding:8px;text-align:left}
- th{background:#eee}
- .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
- button{padding:12px 18px;border:0;border-radius:8px;background:#2563eb;color:white;font-size:16px}
- .back{background:#555}
- @media print{.actions{display:none}body{padding:0}}
- </style>
- </head>
- <body>
- <h1>Mi Dinero</h1>
- <h2>Informe financiero completo</h2>
+ body{font-family:Arial,sans-serif;padding:22px;color:#222;max-width:1000px;margin:auto}
+ h1,h2{text-align:center}p{line-height:1.4}.summary{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+ .box{border:1px solid #ccc;padding:10px;border-radius:8px}.box p{font-weight:bold;margin:7px 0 0}
+ table{width:100%;border-collapse:collapse;margin-top:18px;font-size:13px}
+ th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#edf3ef}
+ .money{text-align:right;white-space:nowrap}.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+ button{padding:12px 18px;border:0;border-radius:8px;background:#126b50;color:white;font-size:15px}
+ @media(max-width:600px){body{padding:10px}table{font-size:10px}th,td{padding:5px}}
+ @media print{.actions{display:none}body{padding:0}tr{break-inside:avoid}}
+ </style></head><body>
+ <h1>💚 Mi Dinero</h1><h2>Informe financiero</h2>
  <p>Fecha del informe: ${new Date().toLocaleDateString('es-DO')}</p>
- <div class="summary">
- ${Object.entries(report.sums).map(([k,v])=>`
-  <div class="box">
-   <strong>${escapeHTML(k==='ingreso'?'Ingresos':k==='gasto'?'Gastos':k==='ahorro'?'Ahorros':k==='deuda'?'Deudas':'Compras planeadas')}</strong>
-   <p>${money(v)}</p>
-  </div>
- `).join('')}
- <div class="box">
-  <strong>Balance</strong>
-  <p>${money(report.balance)}</p>
- </div>
- </div>
- <h2>Todos los movimientos</h2>
- <table>
- <thead><tr>
- <th>Fecha</th><th>Tipo</th><th>Descripción</th>
- <th>Categoría</th><th>Monto</th>
- </tr></thead>
- <tbody>${report.rows||'<tr><td colspan="5">Sin movimientos</td></tr>'}</tbody>
- </table>
-
- <div class="actions">
-  <button onclick="window.print()">Imprimir / Guardar PDF</button>
-  <button class="back" onclick="window.close()">↩ Volver a Mi Dinero</button>
- </div>
-
- </body></html>
- `;
+ <div class="summary">${summary}<div class="box"><strong>Balance disponible estimado</strong><p>${money(report.balance)}</p></div></div>
+ <h2>Historial de movimientos</h2>
+ <table><thead><tr><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Categoría</th><th>Monto</th></tr></thead>
+ <tbody>${report.rows||'<tr><td colspan="5">Sin movimientos</td></tr>'}</tbody></table>
+ <div class="actions"><button onclick="window.print()">Imprimir / Guardar PDF</button><button onclick="window.close()">Cerrar informe</button></div>
+ </body></html>`;
 }
-
 
 document.getElementById('printReport').addEventListener('click',()=>{
- const report=createFinancialReport();
-
- if(!records.length){
-  alert('Todavía no hay movimientos para imprimir.');
-  return;
- }
-
- const win=window.open('','_blank');
-
-if(!win){
- alert('Permite las ventanas emergentes para imprimir.');
- return;
-}
-
-win.document.open();
-win.document.write(reportHTML(report));
-win.document.close();
-
-win.onload=()=>{
- win.focus();
- setTimeout(()=>{
-  win.print();
- },500);
-};
-
-win.onafterprint=()=>{
- win.close();
-};
+ if(!records.length){alert('Todavía no hay movimientos para imprimir.');return}
+ const report=createFinancialReport(),win=window.open('','_blank');
+ if(!win){alert('Permite las ventanas emergentes para imprimir.');return}
+ win.document.open();win.document.write(reportHTML(report));win.document.close();
+ win.onload=()=>{win.focus();setTimeout(()=>win.print(),400)};
 });
 
 document.getElementById('shareReport').addEventListener('click',async()=>{
+ if(!records.length){alert('Todavía no hay movimientos para compartir.');return}
  const report=createFinancialReport();
-
- if(!records.length){
-  alert('Todavía no hay movimientos para compartir.');
-  return;
- }
-
  try{
-  await navigator.share({
-   title:'Informe de Mi Dinero',
-   text:report.text
-  });
- }catch(e){
-  if(e.name!=='AbortError'){
-   try{
-    await navigator.clipboard.writeText(report.text);
-    alert('Informe copiado. Ya puedes compartirlo.');
-   }catch(err){
-    alert('No se pudo compartir. Intenta nuevamente.');
-   }
-  }
+  if(navigator.share)await navigator.share({title:'Informe de Mi Dinero',text:report.text});
+  else throw new Error('Compartir no está disponible');
+ }catch(error){
+  if(error.name==='AbortError')return;
+  try{await navigator.clipboard.writeText(report.text);alert('Informe copiado. Ya puedes pegarlo y compartirlo.')}
+  catch(copyError){alert('No se pudo compartir desde este dispositivo.')}
  }
 });
 
-// ===== FIN DE INFORMES =====
- 
-const SAVED_REPORTS_KEY = 'miDineroInformesGuardadosV1';
-
-let savedReports = [];
-
-try {
- savedReports = JSON.parse(
-  localStorage.getItem(SAVED_REPORTS_KEY) || '[]'
- );
- if(!Array.isArray(savedReports)) savedReports = [];
-} catch(e) {
- savedReports = [];
-}
-
-function saveReportsStorage(){
- localStorage.setItem(
-  SAVED_REPORTS_KEY,
-  JSON.stringify(savedReports)
- );
-}
-
-const savedReportsSection = document.createElement('section');
-savedReportsSection.className = 'card';
-savedReportsSection.style.margin = '15px 0';
-savedReportsSection.style.padding = '15px';
-
-savedReportsSection.innerHTML = `
- <h2>Informes guardados</h2>
- <p>Guarda y consulta tus informes financieros.</p>
- <button type="button" id="saveFinancialReport">
-  💾 Guardar informe actual
- </button>
- <div id="savedReportsList" style="margin-top:15px">
- </div>
-`;
-
-document.body.appendChild(savedReportsSection);
-
 function renderSavedReports(){
- const list = document.getElementById('savedReportsList');
-
- if(!savedReports.length){
-  list.innerHTML = '<p>No tienes informes guardados.</p>';
-  return;
- }
-
- list.innerHTML = '';
-
+ const list=document.getElementById('savedReportsList');list.innerHTML='';
+ if(!savedReports.length){list.innerHTML='<div class="empty">Todavía no tienes informes guardados.</div>';return}
  savedReports.forEach(item=>{
-  const div = document.createElement('div');
-  div.style.padding = '12px';
-  div.style.border = '1px solid #ccc';
-  div.style.borderRadius = '8px';
-  div.style.marginBottom = '10px';
-
-  const name = document.createElement('strong');
-  name.textContent = item.name;
-
-  const date = document.createElement('p');
-  date.textContent = item.date;
-
-  div.append(name,date);
-
-  ['Abrir','Renombrar','Eliminar'].forEach(action=>{
-   const btn = document.createElement('button');
-   btn.type = 'button';
-   btn.textContent = action;
-   btn.style.margin = '4px';
-
-   btn.addEventListener('click',()=>{
-    if(action==='Abrir'){
-     const win = window.open('','_blank');
-     if(!win){
-      alert('Permite las ventanas emergentes.');
-      return;
-     }
-     win.document.open();
-     win.document.write(reportHTML(item.report));
-     win.document.close();
-    }
-
-    if(action==='Renombrar'){
-     const newName = prompt('Nuevo nombre:',item.name);
-     if(newName && newName.trim()){
-      item.name = newName.trim();
-      saveReportsStorage();
-      renderSavedReports();
-     }
-    }
-
-    if(action==='Eliminar'){
+  const card=document.createElement('div');card.className='saved-report';
+  const head=document.createElement('div');head.className='saved-report-head';
+  const info=document.createElement('div');
+  const name=document.createElement('div');name.className='saved-report-name';name.textContent=item.name||'Informe sin nombre';
+  const date=document.createElement('div');date.className='saved-report-date';date.textContent=item.date||'';
+  info.append(name,date);head.append(info);card.append(head);
+  const actions=document.createElement('div');actions.className='saved-report-actions';
+  [['Abrir','open'],['Renombrar','rename'],['Eliminar','delete']].forEach(([label,action])=>{
+   const button=document.createElement('button');button.type='button';button.textContent=label;
+   button.addEventListener('click',()=>{
+    if(action==='open'){
+     const win=window.open('','_blank');
+     if(!win){alert('Permite las ventanas emergentes para abrir el informe.');return}
+     win.document.open();win.document.write(reportHTML(item.report));win.document.close();
+    }else if(action==='rename'){
+     const newName=prompt('Nuevo nombre:',item.name||'');
+     if(newName&&newName.trim()){item.name=newName.trim();saveReportsStorage();renderSavedReports()}
+    }else if(action==='delete'){
      if(confirm('¿Eliminar este informe guardado?')){
-      savedReports = savedReports.filter(r=>r.id!==item.id);
-      saveReportsStorage();
-      renderSavedReports();
+      savedReports=savedReports.filter(report=>report.id!==item.id);
+      saveReportsStorage();renderSavedReports();
      }
     }
    });
-
-   div.appendChild(btn);
+   actions.append(button);
   });
-
-  list.appendChild(div);
+  card.append(actions);list.append(card);
  });
 }
 
-document.getElementById('saveFinancialReport')
-.addEventListener('click',()=>{
- if(!records.length){
-  alert('Todavía no hay movimientos para guardar.');
-  return;
- }
-
- const name = prompt('Nombre para este informe:');
-
- if(!name || !name.trim()) return;
-
- const report = createFinancialReport();
-
- savedReports.push({
-  id: String(Date.now()),
-  name: name.trim(),
-  date: new Date().toLocaleDateString('es-DO'),
-  report: report
- });
-
- try{
-  saveReportsStorage();
-  renderSavedReports();
-  alert('¡Informe guardado correctamente!');
- }catch(e){
-  alert('No se pudo guardar. Puede faltar espacio.');
- }
+document.getElementById('saveFinancialReport').addEventListener('click',()=>{
+ if(!records.length){alert('Todavía no hay movimientos para guardar.');return}
+ const name=prompt('Nombre para este informe:');
+ if(!name||!name.trim())return;
+ const report=createFinancialReport();
+ savedReports.push({id:String(Date.now())+'-'+Math.random().toString(36).slice(2,6),name:name.trim(),
+  date:new Date().toLocaleDateString('es-DO'),report});
+ try{saveReportsStorage();renderSavedReports();alert('¡Informe guardado correctamente!')}
+ catch(error){savedReports.pop();alert('No se pudo guardar. Puede faltar espacio en el dispositivo.')}
 });
 
+let chartTimer;
+window.addEventListener('resize',()=>{clearTimeout(chartTimer);chartTimer=setTimeout(render,150)});
 renderSavedReports();
-
-   render();
+render();
 </script>
- <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./Service-worker.js')
-      .catch(error => console.error('Error Service Worker:', error));
-  });
+<script>
+if('serviceWorker' in navigator){
+ window.addEventListener('load',()=>{
+  navigator.serviceWorker.register('./Service-worker.js')
+   .catch(error=>console.error('Error Service Worker:',error));
+ });
 }
 </script>
-</body></html>en 
+</body>
+</html>
